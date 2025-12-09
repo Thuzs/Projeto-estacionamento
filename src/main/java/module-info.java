@@ -1,8 +1,9 @@
-module com.example.projetoestacionamento {
+module  br.batpark.sp.jandira.estacionamento.ui {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.graphics;
 
 
-    opens com.example.projetoestacionamento to javafx.fxml;
-    exports com.example.projetoestacionamento;
+    opens br.batpark.sp.jandira.estacionamento.ui to javafx.fxml;
+    exports br.batpark.sp.jandira.estacionamento.ui;
 }
