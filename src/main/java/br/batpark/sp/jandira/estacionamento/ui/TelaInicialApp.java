@@ -23,6 +23,7 @@ public class TelaInicialApp extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+
         stage.setTitle("BAT Park - Gestão de Estacionamento");
         stage.setMinWidth(1000);
         stage.setMinHeight(600);
@@ -43,6 +44,7 @@ public class TelaInicialApp extends Application {
         Button btnSaida = new Button("Registrar Saída / Pagamento");
 
         btnEntrada.setOnAction(e -> root.setCenter(criarTelaEntrada()));
+        btnSaida.setOnAction(e -> root.setCenter(criarTelaSaida()));
 
         HBox boxBotoes = new HBox(30, btnEntrada, btnSaida);
         boxBotoes.setAlignment(Pos.CENTER);
@@ -59,11 +61,11 @@ public class TelaInicialApp extends Application {
         Label titulo = new Label("Registrar entrada");
         titulo.setFont(new Font("Adamina", 18));
 
-        GridPane formLayout = new GridPane();
-        formLayout.setHgap(30);
-        formLayout.setVgap(15);
-        formLayout.setPadding(new Insets(80));
-        formLayout.setAlignment(Pos.CENTER);
+        GridPane grid = new GridPane();
+        grid.setHgap(30);
+        grid.setVgap(15);
+        grid.setPadding(new Insets(80));
+        grid.setAlignment(Pos.CENTER);
 
         textFieldPlaca = new TextField();
         textFieldProprietario = new TextField();
@@ -73,9 +75,9 @@ public class TelaInicialApp extends Application {
 
 
 
-        formLayout.addRow(0, new Label("Placa:"), textFieldPlaca);
-        formLayout.addRow(1, new Label("Proprietário:"), textFieldProprietario);
-        formLayout.addRow(2, new Label("Modelo:"), textFieldModelo);
+        grid.addRow(0, new Label("Placa:"), textFieldPlaca);
+        grid.addRow(1, new Label("Proprietário:"), textFieldProprietario);
+        grid.addRow(2, new Label("Modelo:"), textFieldModelo);
 
         Button btnConfirmar = new Button("Confirmar Entrada");
 
@@ -90,11 +92,55 @@ public class TelaInicialApp extends Application {
         HBox boxBotoes = new HBox(20, btnVoltar, btnConfirmar);
         boxBotoes.setAlignment(Pos.CENTER_RIGHT);
 
-        VBox entradaLayout = new VBox(20, titulo, formLayout, boxBotoes);
+        VBox entradaLayout = new VBox(20, titulo, grid, boxBotoes);
         entradaLayout.setPadding(new Insets(30));
         entradaLayout.setAlignment(Pos.TOP_CENTER);
 
+
         return entradaLayout;
     }
+    private VBox criarTelaSaida() {
+        Label titulo = new Label("Registrar Saída / Pagamento");
 
+        titulo.setFont(new Font("Adamina", 18));
+
+        GridPane grid = new GridPane();
+        grid.setHgap(30);
+        grid.setVgap(15);
+        grid.setPadding(new Insets(80));
+        grid.setAlignment(Pos.CENTER);
+
+        textFieldPlaca = new TextField();
+        textFieldProprietario = new TextField();
+        textFieldPlaca.setPrefWidth(300);
+
+        Label tempo = new Label("--");
+        Label valor = new Label("--");
+        grid.addRow(0, new Label("Placa:"), textFieldPlaca);
+        grid.addRow(1, new Label("Proprietário:"), textFieldProprietario);
+        grid.addRow(3, new Label("Tempo de permanencia"), tempo);
+        grid.addRow(4, new Label("Valor a ser pago"), valor);
+
+
+
+
+        Button btnRegistrar = new Button("Confirmar Saída / Pagamento");
+
+        btnRegistrar.setOnAction(e -> {
+            // validação e CSV é aqui.
+            System.out.println("registrado");
+            root.setCenter(criarTelaPrincipal());
+        });
+
+        Button btnVoltar = new Button("Voltar");
+        btnVoltar.setOnAction(e -> root.setCenter(criarTelaPrincipal()));
+
+        HBox boxBotoes = new HBox(20, btnVoltar, btnRegistrar);
+        boxBotoes.setAlignment(Pos.CENTER_RIGHT);
+
+        VBox saidaLayout = new VBox(20, titulo, grid, tempo, valor, boxBotoes);
+        saidaLayout.setPadding(new Insets(30));
+        saidaLayout.setAlignment(Pos.TOP_CENTER);
+        return saidaLayout;
+    };
 }
