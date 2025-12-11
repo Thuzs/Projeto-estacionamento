@@ -102,8 +102,21 @@ public class TelaInicialApp extends Application {
         Button btnConfirmar = new Button("Confirmar Entrada");
 
         btnConfirmar.setOnAction(e -> {
-            // validação e CSV é aqui.
-            System.out.println("entrada registrda");
+            String placa = textFieldPlaca.getText().trim();
+            String proprietario = textFieldProprietario.getText().trim();
+            String modelo = textFieldModelo.getText().trim();
+
+
+            if (placa.isEmpty() || proprietario.isEmpty() || modelo.isEmpty()) {
+                System.err.println("Erro: Todos os campos são obrigatórios!");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                return;
+            }
+
+            Cadastro cadastro = new Cadastro();
+            cadastro.adicionarRegistro(placa, proprietario, modelo);
+
+            System.out.println("Entrada registrada com sucesso!");
             root.setCenter(criarTelaPrincipal());
         });
 
