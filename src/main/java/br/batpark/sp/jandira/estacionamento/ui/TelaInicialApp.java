@@ -1,10 +1,13 @@
 package br.batpark.sp.jandira.estacionamento.ui;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -16,9 +19,9 @@ public class TelaInicialApp extends Application {
     TextField textFieldPlaca;
     TextField textFieldProprietario;
     TextField textFieldModelo;
-    TableView<String> veiculosEstacionados = new TableView<>();
+    TableView<Veiculo> veiculosEstacionados = new TableView<>();
 
-
+    private final ObservableList<Veiculo> dadosVeiculos = FXCollections.observableArrayList();
     BorderPane root = new BorderPane();
 
     @Override
@@ -36,9 +39,25 @@ public class TelaInicialApp extends Application {
     }
 
 
-    private VBox criarTelaPrincipal() {
+    public VBox criarTelaPrincipal() {
 
+        veiculosEstacionados = new TableView<>();
+        veiculosEstacionados.setItems(dadosVeiculos);
         veiculosEstacionados.setPrefHeight(400);
+
+        TableColumn<Veiculo, String> colunaPlaca = new TableColumn<>("Placa");
+        colunaPlaca.setCellValueFactory(new PropertyValueFactory<>("placa"));
+        colunaPlaca.setPrefWidth(300);
+
+        TableColumn<Veiculo, String> colunaModelo = new TableColumn<>("Modelo");
+        colunaModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
+        colunaModelo.setPrefWidth(300);
+
+        TableColumn<Veiculo, String> colunaHora = new TableColumn<>("Horário de Entrada");
+        colunaHora.setCellValueFactory(new PropertyValueFactory<>("horaEntrada"));
+        colunaHora.setPrefWidth(350);
+
+        veiculosEstacionados.getColumns().addAll(colunaPlaca, colunaModelo, colunaHora);
 
         Button btnEntrada = new Button("Registrar Nova Entrada");
         Button btnSaida = new Button("Registrar Saída / Pagamento");
@@ -57,7 +76,7 @@ public class TelaInicialApp extends Application {
 
         return dashboardLayout;
     }
-    private VBox criarTelaEntrada() {
+    public VBox criarTelaEntrada() {
         Label titulo = new Label("Registrar entrada");
         titulo.setFont(new Font("Adamina", 18));
 
@@ -83,6 +102,7 @@ public class TelaInicialApp extends Application {
 
         btnConfirmar.setOnAction(e -> {
             // validação e CSV é aqui.
+            System.out.println("entrada registrda");
             root.setCenter(criarTelaPrincipal());
         });
 
@@ -99,7 +119,7 @@ public class TelaInicialApp extends Application {
 
         return entradaLayout;
     }
-    private VBox criarTelaSaida() {
+    public VBox criarTelaSaida() {
         Label titulo = new Label("Registrar Saída / Pagamento");
 
         titulo.setFont(new Font("Adamina", 18));
