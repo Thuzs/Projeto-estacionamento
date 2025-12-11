@@ -123,25 +123,46 @@ public class TelaInicialApp extends Application {
     public VBox criarTelaSaida() {
         Label titulo = new Label("Registrar Saída / Pagamento");
         titulo.setFont(new Font("Adamina", 18));
+
         Label labelBusca =  new Label("Buscar");
         TextField inputdBusca = new TextField();
         Button btnBuscar = new Button("Buscar");
+        btnBuscar.setOnAction(e -> {
+
+        });
         HBox boxBusca = new HBox(10, labelBusca, inputdBusca, btnBuscar);
         boxBusca.setAlignment(Pos.CENTER);
 
         VBox infoCobranca = new VBox(15);
         infoCobranca.setPadding(new Insets(15));
-        infoCobranca.setStyle("-fx-border-color: #gren; -fx-border-width: 1; -fx-border-radius: 5;");
+        infoCobranca.setStyle("-fx-border-color: #ccccc; -fx-border-width: 1; -fx-border-radius: 5;");
 
+        Label infoTempo = new Label("Tempo de Permanência: 0h 0m");
+        Label infoValor = new Label("Valor a Pagar: R$ 0,00");
+        infoValor.setFont(new Font("Arial", 22));
+        infoValor.setStyle("-fx-font-weight: bold; -fx-text-fill: green;");
+        infoCobranca.getChildren().addAll( infoTempo, infoValor);
+
+        Button btnConfirmarSaida = new Button("Confirmar Pagamento/Saída");
+
+        btnConfirmarSaida.setOnAction(e -> {
+            // Captura Hora Saída e Cálculo Final
+            // Remoção do CSV Ativo e Gravação no Histórico
+            System.out.println("Saída Confirmada e Histórico Gravado!");
+
+
+            root.setCenter(criarTelaPrincipal());
+        });
 
         Button btnVoltar = new Button("Voltar");
         btnVoltar.setOnAction(e -> root.setCenter(criarTelaPrincipal()));
 
-        HBox boxBotoes = new HBox(20, btnVoltar, btnBuscar);
+        HBox boxBotoes = new HBox(20, btnVoltar, btnConfirmarSaida);
         boxBotoes.setAlignment(Pos.CENTER_RIGHT);
 
         VBox saidaLayout = new VBox(20, titulo, boxBusca, infoCobranca, boxBotoes);
         saidaLayout.setPadding(new Insets(30));
+        saidaLayout.setMaxWidth(600);
         saidaLayout.setAlignment(Pos.TOP_CENTER);
         return saidaLayout;
     };
