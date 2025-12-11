@@ -122,44 +122,25 @@ public class TelaInicialApp extends Application {
     }
     public VBox criarTelaSaida() {
         Label titulo = new Label("Registrar Saída / Pagamento");
-
         titulo.setFont(new Font("Adamina", 18));
+        Label labelBusca =  new Label("Buscar");
+        TextField inputdBusca = new TextField();
+        Button btnBuscar = new Button("Buscar");
+        HBox boxBusca = new HBox(10, labelBusca, inputdBusca, btnBuscar);
+        boxBusca.setAlignment(Pos.CENTER);
 
-        GridPane grid = new GridPane();
-        grid.setHgap(30);
-        grid.setVgap(15);
-        grid.setPadding(new Insets(80));
-        grid.setAlignment(Pos.CENTER);
+        VBox infoCobranca = new VBox(15);
+        infoCobranca.setPadding(new Insets(15));
+        infoCobranca.setStyle("-fx-border-color: #gren; -fx-border-width: 1; -fx-border-radius: 5;");
 
-        textFieldPlaca = new TextField();
-        textFieldProprietario = new TextField();
-        textFieldPlaca.setPrefWidth(300);
-
-        Label tempo = new Label("--");
-        Label valor = new Label("--");
-        grid.addRow(0, new Label("Placa:"), textFieldPlaca);
-        grid.addRow(1, new Label("Proprietário:"), textFieldProprietario);
-        grid.addRow(3, new Label("Tempo de permanencia"), tempo);
-        grid.addRow(4, new Label("Valor a ser pago"), valor);
-
-
-
-
-        Button btnRegistrar = new Button("Confirmar Saída / Pagamento");
-
-        btnRegistrar.setOnAction(e -> {
-            // validação e CSV é aqui.
-            System.out.println("registrado");
-            root.setCenter(criarTelaPrincipal());
-        });
 
         Button btnVoltar = new Button("Voltar");
         btnVoltar.setOnAction(e -> root.setCenter(criarTelaPrincipal()));
 
-        HBox boxBotoes = new HBox(20, btnVoltar, btnRegistrar);
+        HBox boxBotoes = new HBox(20, btnVoltar, btnBuscar);
         boxBotoes.setAlignment(Pos.CENTER_RIGHT);
 
-        VBox saidaLayout = new VBox(20, titulo, grid, tempo, valor, boxBotoes);
+        VBox saidaLayout = new VBox(20, titulo, boxBusca, infoCobranca, boxBotoes);
         saidaLayout.setPadding(new Insets(30));
         saidaLayout.setAlignment(Pos.TOP_CENTER);
         return saidaLayout;
