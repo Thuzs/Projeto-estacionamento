@@ -1,5 +1,6 @@
 package br.batpark.sp.jandira.estacionamento.ui;
 
+import br.batpark.sp.jandira.estacionamento.ui.repository.Cadastro;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,9 +20,9 @@ public class TelaInicialApp extends Application {
     TextField textFieldPlaca;
     TextField textFieldProprietario;
     TextField textFieldModelo;
-    TableView<Veiculo> veiculosEstacionados = new TableView<>();
+    TableView<Cadastro> veiculosEstacionados = new TableView<>();
 
-    private final ObservableList<Veiculo> dadosVeiculos = FXCollections.observableArrayList();
+    private final ObservableList<Cadastro> dadosCadastro = FXCollections.observableArrayList();
     BorderPane root = new BorderPane();
 
     @Override
@@ -42,18 +43,18 @@ public class TelaInicialApp extends Application {
     public VBox criarTelaPrincipal() {
 
         veiculosEstacionados = new TableView<>();
-        veiculosEstacionados.setItems(dadosVeiculos);
+        veiculosEstacionados.setItems(dadosCadastro);
         veiculosEstacionados.setPrefHeight(400);
 
-        TableColumn<Veiculo, String> colunaPlaca = new TableColumn<>("Placa");
+        TableColumn<Cadastro, String> colunaPlaca = new TableColumn<>("Placa");
         colunaPlaca.setCellValueFactory(new PropertyValueFactory<>("placa"));
         colunaPlaca.setPrefWidth(300);
 
-        TableColumn<Veiculo, String> colunaModelo = new TableColumn<>("Modelo");
+        TableColumn<Cadastro, String> colunaModelo = new TableColumn<>("Modelo");
         colunaModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
         colunaModelo.setPrefWidth(300);
 
-        TableColumn<Veiculo, String> colunaHora = new TableColumn<>("Horário de Entrada");
+        TableColumn<Cadastro, String> colunaHora = new TableColumn<>("Horário de Entrada");
         colunaHora.setCellValueFactory(new PropertyValueFactory<>("horaEntrada"));
         colunaHora.setPrefWidth(350);
 
