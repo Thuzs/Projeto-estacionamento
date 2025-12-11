@@ -54,7 +54,7 @@ public class TelaInicialApp extends Application {
         colunaModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
         colunaModelo.setPrefWidth(300);
 
-        TableColumn<Cadastro, String> colunaHora = new TableColumn<>("Horário de Entrada");
+        TableColumn<Cadastro, Double> colunaHora = new TableColumn<>("Horário de Entrada");
         colunaHora.setCellValueFactory(new PropertyValueFactory<>("horaEntrada"));
         colunaHora.setPrefWidth(350);
 
