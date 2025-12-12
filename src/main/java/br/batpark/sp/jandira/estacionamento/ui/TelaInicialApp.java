@@ -48,17 +48,22 @@ public class TelaInicialApp extends Application {
 
         TableColumn<Cadastro, String> colunaPlaca = new TableColumn<>("Placa");
         colunaPlaca.setCellValueFactory(new PropertyValueFactory<>("placa"));
-        colunaPlaca.setPrefWidth(300);
+        colunaPlaca.setPrefWidth(250);
 
         TableColumn<Cadastro, String> colunaModelo = new TableColumn<>("Modelo");
         colunaModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
-        colunaModelo.setPrefWidth(300);
+        colunaModelo.setPrefWidth(250);
+
+        TableColumn<Cadastro, String> colunaProprietario = new TableColumn<>("Proprietario");
+        colunaProprietario.setCellValueFactory(new PropertyValueFactory<>("proprietario"));
+        colunaProprietario.setPrefWidth(250);
 
         TableColumn<Cadastro, Double> colunaHora = new TableColumn<>("Horário de Entrada");
         colunaHora.setCellValueFactory(new PropertyValueFactory<>("horaEntrada"));
-        colunaHora.setPrefWidth(350);
+        colunaHora.setPrefWidth(250);
 
-        veiculosEstacionados.getColumns().addAll(colunaPlaca, colunaModelo, colunaHora);
+
+        veiculosEstacionados.getColumns().addAll(colunaPlaca, colunaModelo, colunaProprietario, colunaHora);
 
         Button btnEntrada = new Button("Registrar Nova Entrada");
         Button btnSaida = new Button("Registrar Saída / Pagamento");
@@ -137,7 +142,7 @@ public class TelaInicialApp extends Application {
         Label titulo = new Label("Registrar Saída / Pagamento");
         titulo.setFont(new Font("Adamina", 18));
 
-        Label labelBusca =  new Label("Buscar");
+        Label labelBusca =  new Label("Buscar Placa");
         TextField inputdBusca = new TextField();
         Button btnBuscar = new Button("Buscar");
         btnBuscar.setOnAction(e -> {

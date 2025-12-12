@@ -11,7 +11,9 @@ import java.time.format.DateTimeFormatter;
 
 public class Cadastro {
 
-    private Path arquivoVeiculosEstacionados = Paths.get("/Users/25203616/Documents/CSV/veiculos_estacionados.csv");
+    private Path arquivoVeiculosEstacionados = Paths.get("/Documents/CSV/veiculos_estacionados.csv");
+    private Path arquivoVeiculosEstacionadosWin = Paths.get("C:\\Documents\\CSV\\veiculos_estacionados.csv");
+
 
     private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -19,6 +21,7 @@ public class Cadastro {
         //Garante que o diretório exista
         try {
             Files.createDirectories(arquivoVeiculosEstacionados.getParent());
+            Files.createDirectories(arquivoVeiculosEstacionadosWin.getParent());
         } catch (IOException e) {
             System.err.println("Erro ao criar diretório para CSV: " + e.getMessage());
         }
