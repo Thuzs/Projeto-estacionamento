@@ -1,5 +1,6 @@
 package br.batpark.sp.jandira.estacionamento.ui;
 
+import br.batpark.sp.jandira.estacionamento.model.VeiculoEstacionado;
 import br.batpark.sp.jandira.estacionamento.ui.repository.Cadastro;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -14,6 +15,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class TelaInicialApp extends Application {
 
@@ -23,6 +26,7 @@ public class TelaInicialApp extends Application {
     TableView<Cadastro> veiculosEstacionados = new TableView<>();
 
     private final ObservableList<Cadastro> dadosCadastro = FXCollections.observableArrayList();
+    private final Cadastro cadastro = new Cadastro();
     BorderPane root = new BorderPane();
 
     @Override
@@ -78,10 +82,13 @@ public class TelaInicialApp extends Application {
         VBox dashboardLayout = new VBox(20, veiculosEstacionados,  boxBotoes);
         dashboardLayout.setPadding(new Insets(30));
         dashboardLayout.setAlignment(Pos.CENTER);
+        carregarCSV();
 
 
         return dashboardLayout;
     }
+
+
     public VBox criarTelaEntrada() {
         Label titulo = new Label("Registrar entrada");
         titulo.setFont(new Font("Adamina", 18));
@@ -113,8 +120,7 @@ public class TelaInicialApp extends Application {
 
 
             if (placa.isEmpty() || proprietario.isEmpty() || modelo.isEmpty()) {
-                System.err.println("Erro: Todos os campos são obrigatórios!");
-                Alert alert = new Alert(Alert.AlertType.ERROR);
+                new Alert(Alert.AlertType.ERROR,"Todos os campos são obrigatórios!" ).show();
                 return;
             }
 
@@ -137,6 +143,31 @@ public class TelaInicialApp extends Application {
 
 
         return entradaLayout;
+    }
+    public void carregarCSV() {
+        veiculosEstacionados.getItems().clear();
+        Path arquivo = cadastro.getArquivoVeiculosEstacionados();
+
+        if (!Files.exists(arquivo)) {
+            return;
+        }
+
+        try {
+            for (String linha : Files.readAllLines(arquivo)) {
+
+                String[] campos = linha.split(";");
+
+                if (campos.length < 4) continue;
+
+                VeiculoEstacionado v = new VeiculoEstacionado(
+                        campos[0], campos[1], campos[2], campos[3]
+                );
+
+                dadosCadastro.add(v);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public VBox criarTelaSaida() {
         Label titulo = new Label("Registrar Saída / Pagamento");

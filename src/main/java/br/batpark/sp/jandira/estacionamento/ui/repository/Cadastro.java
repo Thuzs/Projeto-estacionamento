@@ -1,6 +1,9 @@
 package br.batpark.sp.jandira.estacionamento.ui.repository;
 
 import br.batpark.sp.jandira.estacionamento.model.VeiculoEstacionado; // Certifique-se de criar esta classe!
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,8 +14,8 @@ import java.time.format.DateTimeFormatter;
 
 public class Cadastro {
 
-    private Path arquivoVeiculosEstacionados = Paths.get("/Documents/CSV/veiculos_estacionados.csv");
-    private Path arquivoVeiculosEstacionadosWin = Paths.get("C:\\Documents\\CSV\\veiculos_estacionados.csv");
+    private Path arquivoVeiculosEstacionados = Paths.get("/Users/25203616/Documentos/CSV/veiculos_estacionados.csv");
+    //private Path arquivoVeiculosEstacionadosWin = Paths.get("C:\\Documents\\CSV\\veiculos_estacionados.csv");
 
 
     private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -21,7 +24,7 @@ public class Cadastro {
         //Garante que o diretório exista
         try {
             Files.createDirectories(arquivoVeiculosEstacionados.getParent());
-            Files.createDirectories(arquivoVeiculosEstacionadosWin.getParent());
+            //Files.createDirectories(arquivoVeiculosEstacionadosWin.getParent());
         } catch (IOException e) {
             System.err.println("Erro ao criar diretório para CSV: " + e.getMessage());
         }
@@ -49,5 +52,8 @@ public class Cadastro {
         } catch (IOException e) {
             System.err.println("Erro ao escrever no arquivo CSV: " + e.getMessage());
         }
+    }
+    public Path getArquivoVeiculosEstacionados() {
+        return arquivoVeiculosEstacionados;
     }
 }
