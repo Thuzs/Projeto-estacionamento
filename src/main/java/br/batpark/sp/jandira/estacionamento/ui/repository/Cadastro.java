@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Cadastro {
 
-    private Path arquivoVeiculosEstacionados = Paths.get("C:\\Users\\Brayan\\Documents\\CSV\\veiculos_estacionados.csv");
+    private Path arquivoVeiculosEstacionados = Paths.get("/Users/25203616/Documents/CSV/veiculos_estacionados.csv");
 
     private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
