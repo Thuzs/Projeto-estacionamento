@@ -17,6 +17,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class TelaInicialApp extends Application {
 
@@ -194,10 +196,20 @@ public class TelaInicialApp extends Application {
 
         Button btnConfirmarSaida = new Button("Confirmar Pagamento/Saída");
 
-        btnConfirmarSaida.setOnAction(e -> {
-            // Captura Hora Saída e Cálculo Final
-            // Remoção do CSV Ativo e Gravação no Histórico
-            System.out.println("Saída Confirmada e Histórico Gravado!");
+            final VeiculoEstacionado[] veiculoEncontrado = {null};
+            final double[] valorCalculado = {0.0};
+            final LocalDateTime[] horaSaida = {null};
+            final Duration[] duracaoPermanencia = {null};
+
+
+            // Lógica de Busca e Cálculo
+            btnBuscar.setOnAction(e -> {
+                String placa = inputdBusca.getText().trim();
+                if (placa.isEmpty()) {
+                    new Alert(Alert.AlertType.WARNING, "Digite a placa para buscar.").show();
+                    // REMOVIDA: btnConfirmarSaida.setDisable(true);
+                    return;
+                }
 
 
             root.setCenter(criarTelaPrincipal());

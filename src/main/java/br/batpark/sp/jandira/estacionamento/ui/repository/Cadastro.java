@@ -9,8 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Cadastro {
 
@@ -30,6 +33,7 @@ public class Cadastro {
             System.err.println("Erro ao criar diretório para CSV: " + e.getMessage());
         }
     }
+
     public void adicionarRegistro(String placa, String proprietario, String modelo) {
         try {
             LocalDateTime entrada = LocalDateTime.now();
@@ -54,7 +58,42 @@ public class Cadastro {
             System.err.println("Erro ao escrever no arquivo CSV: " + e.getMessage());
         }
     }
+
+    public void removerRegistro(String placa) throws IOException {
+        if (!Files.exists(arquivoVeiculosEstacionados)) return;
+
+        List<String> linhasAtuais = Files.readAllLines(arquivoVeiculosEstacionados);
+
+        // Procura a placa para ser removida
+        List<String> linhasFiltradas = linhasAtuais.stream()
+                .filter(linha -> !linha.split(";")[0].equalsIgnoreCase(placa.trim()))
+                .collect(Collectors.toList());
+
+
+        // Reescreve o arquivo sem o registro removido
+        Files.write(arquivoVeiculosEstacionados, linhasFiltradas,
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+
+    public void salvarHistorico(VeiculoEstacionado veiculo, LocalDateTime dataHoraSaida, Duration tempoPermanencia, double valorPago) throws IOException { // RF-014
+
+        // Placa; Modelo; Proprietário; Entrada; Saída; Tempo (Minutos); Valor Pago
+        String registroHistorico = String.format("%s;%s;%s;%s;%s;%d;%.2f%n",
+                veiculo.getPlaca(),
+                veiculo.getModelo(),
+                veiculo.getProprietario(),
+                veiculo.getHoraEntrada(),
+                dataHoraSaida.format(FORMATTER),
+                tempoPermanencia.toMinutes(),
+                valorPago
+        );
+
+        Files.write(arquivoHistoricoSaidas, registroHistorico.getBytes(),
+                StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
     public Path getArquivoVeiculosEstacionados() {
         return arquivoVeiculosEstacionados;
     }
 }
+

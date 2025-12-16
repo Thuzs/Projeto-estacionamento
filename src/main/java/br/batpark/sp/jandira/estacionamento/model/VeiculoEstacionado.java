@@ -22,5 +22,5 @@ public class VeiculoEstacionado extends Cadastro {
     public String getPlaca() { return placa; }
     public String getModelo() { return modelo; }
     public String getProprietario() { return proprietario; }
-    public String getDataHoraEntrada() { return dataHoraEntrada; }
+    public String getHoraEntrada() { return dataHoraEntrada; }
 }
