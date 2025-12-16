@@ -19,16 +19,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class TelaInicialApp extends Application {
+
 
     TextField textFieldPlaca;
     TextField textFieldProprietario;
     TextField textFieldModelo;
-    TableView<Cadastro> veiculosEstacionados = new TableView<>();
+    TableView<VeiculoEstacionado> veiculosEstacionados = new TableView<>();
 
-    private final ObservableList<Cadastro> dadosCadastro = FXCollections.observableArrayList();
+    private final ObservableList<VeiculoEstacionado> dadosCadastro = FXCollections.observableArrayList();
     private final Cadastro cadastro = new Cadastro();
+    private final DateTimeFormatter FORMATTER =  DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     BorderPane root = new BorderPane();
 
     @Override
@@ -49,22 +52,24 @@ public class TelaInicialApp extends Application {
     public VBox criarTelaPrincipal() {
 
         veiculosEstacionados = new TableView<>();
+        dadosCadastro.clear();
+        dadosCadastro.addAll(cadastro.buscarTodos());
         veiculosEstacionados.setItems(dadosCadastro);
         veiculosEstacionados.setPrefHeight(400);
 
-        TableColumn<Cadastro, String> colunaPlaca = new TableColumn<>("Placa");
+        TableColumn<VeiculoEstacionado, String> colunaPlaca = new TableColumn<>("Placa");
         colunaPlaca.setCellValueFactory(new PropertyValueFactory<>("placa"));
         colunaPlaca.setPrefWidth(250);
 
-        TableColumn<Cadastro, String> colunaModelo = new TableColumn<>("Modelo");
+        TableColumn<VeiculoEstacionado, String> colunaModelo = new TableColumn<>("Modelo");
         colunaModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
         colunaModelo.setPrefWidth(250);
 
-        TableColumn<Cadastro, String> colunaProprietario = new TableColumn<>("Proprietario");
+        TableColumn<VeiculoEstacionado, String> colunaProprietario = new TableColumn<>("Proprietario");
         colunaProprietario.setCellValueFactory(new PropertyValueFactory<>("proprietario"));
         colunaProprietario.setPrefWidth(250);
 
-        TableColumn<Cadastro, Double> colunaHora = new TableColumn<>("Horário de Entrada");
+        TableColumn<VeiculoEstacionado, String> colunaHora = new TableColumn<>("Horário de Entrada");
         colunaHora.setCellValueFactory(new PropertyValueFactory<>("horaEntrada"));
         colunaHora.setPrefWidth(250);
 
@@ -84,7 +89,7 @@ public class TelaInicialApp extends Application {
         VBox dashboardLayout = new VBox(20, veiculosEstacionados,  boxBotoes);
         dashboardLayout.setPadding(new Insets(30));
         dashboardLayout.setAlignment(Pos.CENTER);
-        carregarCSV();
+
 
 
         return dashboardLayout;
@@ -126,7 +131,12 @@ public class TelaInicialApp extends Application {
                 return;
             }
 
-            Cadastro cadastro = new Cadastro();
+            if (cadastro.buscarPorPlaca(placa) != null) {
+                new Alert(Alert.AlertType.WARNING,"Placa já registrada e estacionada!" ).show();
+                return;
+            }
+
+
             cadastro.adicionarRegistro(placa, proprietario, modelo);
 
             System.out.println("Entrada registrada com sucesso!");
@@ -146,30 +156,35 @@ public class TelaInicialApp extends Application {
 
         return entradaLayout;
     }
-    public void carregarCSV() {
-        veiculosEstacionados.getItems().clear();
-        Path arquivo = cadastro.getArquivoVeiculosEstacionados();
+    public double[] calcularCobranca(String entradaString, LocalDateTime saida) {
 
-        if (!Files.exists(arquivo)) {
-            return;
-        }
+        LocalDateTime entrada = LocalDateTime.parse(entradaString, FORMATTER);
+        Duration duracao = Duration.between(entrada, saida);
+        long minutosTotal = duracao.toMinutes();
 
-        try {
-            for (String linha : Files.readAllLines(arquivo)) {
+        double valorTotal = 0.0;
+        long horasCobranca = 0;
+        long minutosExcedentes = 0;
 
-                String[] campos = linha.split(";");
+        if (minutosTotal > 0) {
+            horasCobranca = minutosTotal / 60;
+            minutosExcedentes = minutosTotal % 60;
 
-                if (campos.length < 4) continue;
-
-                VeiculoEstacionado v = new VeiculoEstacionado(
-                        campos[0], campos[1], campos[2], campos[3]
-                );
-
-                dadosCadastro.add(v);
+            if (minutosExcedentes >= 5) {
+                horasCobranca++;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            if (horasCobranca > 0) {
+                valorTotal += 10.00;
+
+                long horasSubsequentes = horasCobranca - 1;
+
+                if (horasSubsequentes > 0) {
+                    valorTotal += horasSubsequentes * 5.00;
+                }
+            }
         }
+        return new double[]{ (double) horasCobranca, valorTotal, (double) minutosTotal };
     }
     public VBox criarTelaSaida() {
         Label titulo = new Label("Registrar Saída / Pagamento");
@@ -178,9 +193,7 @@ public class TelaInicialApp extends Application {
         Label labelBusca =  new Label("Buscar Placa");
         TextField inputdBusca = new TextField();
         Button btnBuscar = new Button("Buscar");
-        btnBuscar.setOnAction(e -> {
 
-        });
         HBox boxBusca = new HBox(10, labelBusca, inputdBusca, btnBuscar);
         boxBusca.setAlignment(Pos.CENTER);
 
@@ -211,8 +224,62 @@ public class TelaInicialApp extends Application {
                     return;
                 }
 
+                VeiculoEstacionado veiculo = cadastro.buscarPorPlaca(placa);
+                veiculoEncontrado[0] = veiculo;
 
-            root.setCenter(criarTelaPrincipal());
+                if (veiculo != null) {
+                    // RF-006: Captura o timestamp de saída
+                    horaSaida[0] = LocalDateTime.now();
+                    LocalDateTime entradaTime = LocalDateTime.parse(veiculo.getHoraEntrada(), FORMATTER);
+
+                    // Cálculo de Duration e Valor
+                    Duration duracao = Duration.between(entradaTime, horaSaida[0]);
+                    duracaoPermanencia[0] = duracao; // Armazena a duração real
+                    double[] resultadoCalculo = calcularCobranca(veiculo.getHoraEntrada(), horaSaida[0]);
+
+                    double horasCobranca = resultadoCalculo[0];
+                    double valorPagar = resultadoCalculo[1];
+                    long minutosTotais = (long) resultadoCalculo[2];
+
+                    valorCalculado[0] = valorPagar;
+
+
+                    long horasReais = minutosTotais / 60;
+                    long minutosReais = minutosTotais % 60;
+                    infoTempo.setText(String.format("Tempo de Permanência: %d h %d m (Cobrado: %.0f horas)", horasReais, minutosReais, horasCobranca));
+
+                    infoValor.setText(String.format("Valor a Pagar: R$ %.2f", valorPagar));
+
+                    // REMOVIDA QUALQUER ATIVAÇÃO/DESATIVAÇÃO CONDICIONAL AQUI
+
+                } else {
+                    new Alert(Alert.AlertType.ERROR, "Placa não encontrada no estacionamento.").show();
+                    infoValor.setText("Valor a Pagar: R$ 0,00");
+                    System.out.println("sla");
+                    // REMOVIDA: btnConfirmarSaida.setDisable(true);
+                }
+            });
+        btnConfirmarSaida.setOnAction(e -> {
+            if (veiculoEncontrado[0] != null) {
+                try {
+                    // RF-014: Salva histórico
+                    cadastro.salvarHistorico(veiculoEncontrado[0], horaSaida[0], duracaoPermanencia[0], valorCalculado[0]);
+
+                    // RF-013: Remove do CSV ativo
+                    cadastro.removerRegistro(veiculoEncontrado[0].getPlaca());
+
+                    new Alert(Alert.AlertType.INFORMATION,
+                            String.format("Saída registrada. Valor pago: R$ %.2f.", valorCalculado[0])).show();
+
+                    root.setCenter(criarTelaPrincipal());
+
+                } catch (IOException ex) {
+                    new Alert(Alert.AlertType.ERROR, "Erro ao processar a saída: " + ex.getMessage()).show();
+                }
+            } else {
+                // Adicionado alerta para o caso de o usuário clicar sem buscar a placa (já que o botão está sempre ativo)
+                new Alert(Alert.AlertType.WARNING, "Por favor, busque a placa do veículo antes de confirmar a saída/pagamento.").show();
+            }
         });
 
         Button btnVoltar = new Button("Voltar");

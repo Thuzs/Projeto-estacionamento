@@ -52,13 +52,46 @@ public class Cadastro {
                     StandardOpenOption.APPEND
             );
 
+
+
             System.out.println("Registro de entrada salvo com sucesso no CSV.");
 
         } catch (IOException e) {
             System.err.println("Erro ao escrever no arquivo CSV: " + e.getMessage());
         }
     }
+    public ObservableList<VeiculoEstacionado> buscarTodos() {
+        ObservableList<VeiculoEstacionado> veiculos = FXCollections.observableArrayList();
+        if (!Files.exists(arquivoVeiculosEstacionados)) return veiculos;
 
+        try {
+            for (String linha : Files.readAllLines(arquivoVeiculosEstacionados)) {
+                String[] campos = linha.split(";");
+                if (campos.length < 4) continue;
+                veiculos.add(new VeiculoEstacionado(campos[0], campos[1], campos[2], campos[3]));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return veiculos;
+    }
+
+    public VeiculoEstacionado buscarPorPlaca(String placa) {
+        if (!Files.exists(arquivoVeiculosEstacionados)) return null;
+
+        try {
+            for (String linha : Files.readAllLines(arquivoVeiculosEstacionados)) {
+                String[] campos = linha.split(";");
+
+                if (campos.length >= 4 && campos[0].equalsIgnoreCase(placa.trim())) {
+                    return new VeiculoEstacionado(campos[0], campos[1], campos[2], campos[3]);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao buscar veículo no CSV: " + e.getMessage());
+        }
+        return null;
+    }
     public void removerRegistro(String placa) throws IOException {
         if (!Files.exists(arquivoVeiculosEstacionados)) return;
 
